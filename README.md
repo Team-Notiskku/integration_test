@@ -13,3 +13,7 @@ test : 테스트 코드 추가 또는 수정
 ci : CI/CD 관련 설정 변경   
 perf : 성능 개선   
 revert : 이전 커밋을 되돌릴 때   
+
+### when running
+1. flutter run 
+2. flutter pub get
