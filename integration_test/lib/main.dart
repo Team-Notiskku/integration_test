@@ -21,43 +21,76 @@ class GoogleSheetsPage extends StatefulWidget {
 }
 
 class _GoogleSheetsPageState extends State<GoogleSheetsPage> {
-  List<List<String>> sheetData = [];
+  List<Map<String, String>> sheetData = [];
   int currentRow = 1;
   bool isLoading = false;
+  bool hasMoreData = true; 
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _loadSheetData();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 100) {
+      _loadSheetData();
+    }
   }
 
   Future<void> _loadSheetData() async {
-    if (isLoading) return;
+    if (isLoading || !hasMoreData) return;
     setState(() => isLoading = true);
 
     final data = await GoogleSheetsAPI.readData(startRow: currentRow, limit: 10);
 
-    setState(() {
-      sheetData.addAll(data);
-      currentRow += 10;
-      isLoading = false;
-    });
+    if (data.isEmpty) {
+      setState(() {
+        hasMoreData = false; 
+      });
+    } else {
+      List<Map<String, String>> parsedData = data.map((row) {
+        return {
+          "id": row.isNotEmpty ? row[0] : "",
+          "category": row.length > 1 ? row[1] : "",
+          "title": row.length > 2 ? row[2] : "",
+          "date": row.length > 3 ? row[3] : "",
+          "uploader": row.length > 4 ? row[4] : "",
+          "views": row.length > 5 ? row[5] : "",
+          "link": row.length > 6 ? row[6] : "",
+        };
+      }).toList();
+
+      setState(() {
+        sheetData.addAll(parsedData);
+        currentRow += 10;
+      });
+    }
+
+    setState(() => isLoading = false);
   }
 
   void _launchURL(String url) async {
-  final Uri uri = Uri.parse(url);
-  
-  if (await canLaunchUrl(uri)) {
-    bool launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
-    if (launched) {
-      print("URL Opened");
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      bool launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (launched) {
+        print("URL Opened: $url");
+      } else {
+        print("CANNOT OPEN ERROR: $url");
+      }
     } else {
-      print("CANNOT OPEN ERROR: $url");
+      print("INVALID ERROR: $url");
     }
-  } else {
-    print("INVALID ERROR: $url");
   }
-}
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,31 +100,25 @@ class _GoogleSheetsPageState extends State<GoogleSheetsPage> {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: sheetData.length + 1,
+              controller: _scrollController,
+              itemCount: sheetData.length + (hasMoreData ? 1 : 0),
               itemBuilder: (context, index) {
                 if (index == sheetData.length) {
-                  return isLoading
-                      ? Center(child: CircularProgressIndicator())
-                      : ElevatedButton(
-                          onPressed: _loadSheetData,
-                          child: Text("더 보기"),
-                        );
+                  return Center(child: CircularProgressIndicator()); 
                 }
 
-                String noticeText = sheetData[index].sublist(0, sheetData[index].length - 1).join(" | "); 
-                String url = sheetData[index].last; 
-
+                final notice = sheetData[index];
                 return ListTile(
                   title: Text(
-                    noticeText,
+                    "${notice['id']} | ${notice['category']} | ${notice['title']} | ${notice['date']} | ${notice['uploader']} | ${notice['views']}",
                     style: TextStyle(color: Colors.black),
                   ),
                   onTap: () {
-                    if (Uri.parse(url).isAbsolute) {
-                      _launchURL(url);
+                    if (Uri.parse(notice['link'] ?? "").isAbsolute) {
+                      _launchURL(notice['link']!);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('잘못된 URL 형식: $url')),
+                        SnackBar(content: Text('잘못된 URL 형식: ${notice['link']}')),
                       );
                     }
                   },
