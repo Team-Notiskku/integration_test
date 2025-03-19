@@ -21,6 +21,8 @@ class GoogleSheetsPage extends StatefulWidget {
 
 class _GoogleSheetsPageState extends State<GoogleSheetsPage> {
   List<List<String>> sheetData = [];
+  int currentRow = 1; 
+  bool isLoading = false; 
 
   @override
   void initState() {
@@ -29,9 +31,15 @@ class _GoogleSheetsPageState extends State<GoogleSheetsPage> {
   }
 
   Future<void> _loadSheetData() async {
-    final data = await GoogleSheetsAPI.readData();
+    if (isLoading) return;
+    setState(() => isLoading = true);
+
+    final data = await GoogleSheetsAPI.readData(startRow: currentRow, limit: 10);
+
     setState(() {
-      sheetData = data;
+      sheetData.addAll(data);
+      currentRow += 10;
+      isLoading = false;
     });
   }
 
@@ -43,10 +51,18 @@ class _GoogleSheetsPageState extends State<GoogleSheetsPage> {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: sheetData.length,
+              itemCount: sheetData.length + 1,
               itemBuilder: (context, index) {
+                if (index == sheetData.length) {
+                  return isLoading
+                      ? Center(child: CircularProgressIndicator())
+                      : ElevatedButton(
+                          onPressed: _loadSheetData,
+                          child: Text("더 보기"),
+                        );
+                }
                 return ListTile(
-                  title: Text(sheetData[index].join(" | ")), // 데이터 표시
+                  title: Text(sheetData[index].join(" | ")), 
                 );
               },
             ),
