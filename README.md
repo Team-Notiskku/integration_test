@@ -17,3 +17,7 @@ revert : 이전 커밋을 되돌릴 때
 ### when running
 1. flutter run 
 2. flutter pub get
+
+
+### used for complete refactorization
+// ❌❌❌❌❌ DO NOT MODIFY ❌❌❌❌❌

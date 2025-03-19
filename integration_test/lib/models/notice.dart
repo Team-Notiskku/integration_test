@@ -1,3 +1,5 @@
+// ❌❌❌❌❌ DO NOT MODIFY ❌❌❌❌❌
+
 class Notice {
   final String id;
   final String category;
@@ -5,7 +7,7 @@ class Notice {
   final String date;
   final String uploader;
   final String views;
-  final String url;
+  final String link;
 
   Notice({
     required this.id,
@@ -14,10 +16,9 @@ class Notice {
     required this.date,
     required this.uploader,
     required this.views,
-    required this.url,
+    required this.link,
   });
 
-  // Google Sheets 데이터를 Notice 객체로 변환하는 팩토리 메서드
   factory Notice.fromSheet(List<String> row) {
     return Notice(
       id: row.isNotEmpty ? row[0] : "",
@@ -26,7 +27,7 @@ class Notice {
       date: row.length > 3 ? row[3] : "",
       uploader: row.length > 4 ? row[4] : "",
       views: row.length > 5 ? row[5] : "",
-      url: row.length > 6 ? row[6] : "",
+      link: row.length > 6 ? row[6] : "",
     );
   }
 }
