@@ -1,3 +1,5 @@
+// ❌❌❌❌❌ DO NOT MODIFY ❌❌❌❌❌
+
 class Major {
   const Major({
     required this.department,
