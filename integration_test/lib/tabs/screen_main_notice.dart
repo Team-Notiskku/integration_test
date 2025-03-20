@@ -15,9 +15,29 @@ class ScreenMainNotice extends ConsumerStatefulWidget {
 }
 
 class _ScreenMainNoticeState extends ConsumerState<ScreenMainNotice> {
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController()..addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 100) {
+      ref.read(noticesProvider.notifier).loadMoreNotices();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final noticesAsync = ref.watch(noticesProvider); 
+    final notices = ref.watch(noticesProvider);
 
     return Scaffold(
       appBar: const _NoticeAppBar(),
@@ -29,20 +49,17 @@ class _ScreenMainNoticeState extends ConsumerState<ScreenMainNotice> {
           BarCategories(),
           Expanded(
             child: RefreshIndicator(
+              color: const Color(0xFF0B5B42),
+              backgroundColor: Colors.white,
               onRefresh: () async {
-                ref.invalidate(noticesProvider); 
+                await ref.read(noticesProvider.notifier).refreshNotices();
               },
-              child: noticesAsync.when(
-                data: (notices) => ListView.builder(
-                  itemCount: notices.length,
-                  itemBuilder: (context, index) {
-                    return NoticeTile(notice: notices[index]); 
-                  },
-                ),
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, stack) => const Center(
-                  child: Text("공지사항을 불러올 수 없습니다."),
-                ),
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: notices.length,
+                itemBuilder: (context, index) {
+                  return NoticeTile(notice: notices[index]);
+                },
               ),
             ),
           ),
