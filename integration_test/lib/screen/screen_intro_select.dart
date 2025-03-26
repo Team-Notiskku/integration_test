@@ -4,18 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:integration_test/providers/bar_providers.dart';
 import 'package:integration_test/providers/keyword_providers.dart';
 import 'package:integration_test/providers/major_provider.dart';
+import 'package:integration_test/screen/screen_intro_alarm.dart';
 import 'package:integration_test/widgets/bar/bar_settings.dart';
 import 'package:integration_test/widgets/button/wide_condition.dart';
 import 'package:integration_test/widgets/grid/grid_keywords.dart';
 import 'package:integration_test/widgets/list/list_major.dart';
-import 'package:notiskku/widget/grid/grid_keywords.dart';
-import 'package:notiskku/widget/bar/bar_settings.dart';
-import 'package:notiskku/widget/list/list_major.dart';
-import 'package:notiskku/widget/button/wide_condition.dart';
-import 'package:notiskku/providers/bar_providers.dart';
-import 'package:notiskku/providers/major_provider.dart';
-import 'package:notiskku/providers/keyword_provider.dart';
-import 'package:notiskku/screen/screen_intro_alarm.dart';
 
 // 관심 학과와 키워드를 선택해주세요 
 class ScreenIntroSelect extends ConsumerWidget {
@@ -71,7 +64,7 @@ class ScreenIntroSelect extends ConsumerWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ScreenIntroAlarm(), // 
+                        builder: (context) => const ScreenIntroAlarm(), 
                       ),
                     );
                   }

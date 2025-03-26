@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:integration_test/tabs/screen_main_box.dart';
+import 'package:integration_test/tabs/screen_main_calendar.dart';
+import 'package:integration_test/tabs/screen_main_keyword.dart';
 import 'package:integration_test/tabs/screen_main_notice.dart';
-import 'package:notiskku/tabs/screen_main_keyword.dart';
-import 'package:notiskku/tabs/screen_main_notice.dart';
-import 'package:notiskku/tabs/screen_main_box.dart';
-import 'package:notiskku/tabs/screen_main_calender.dart';
-import 'package:notiskku/tabs/screen_main_others.dart';
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -40,9 +37,9 @@ class _ScreenMainTabsState extends State<ScreenMainTabs> {
   final List<Widget> _pages = const [
     ScreenMainNotice(),
     ScreenMainKeyword(),
-    ScreenMainBox(),
-    ScreenMainCalender(),
-    ScreenMainOthers(),
+    // ScreenMainBox(),
+    // ScreenMainCalender(),
+    // ScreenMainOthers(),
   ];
 
   // 하단 네비게이션 아이템 정의

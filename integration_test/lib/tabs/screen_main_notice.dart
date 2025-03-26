@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:integration_test/models/notice.dart';
+import 'package:integration_test/providers/bar_providers.dart';
 import 'package:integration_test/providers/list_notices_provider.dart';
 import 'package:integration_test/widgets/bar/bar_categories.dart';
 import 'package:integration_test/widgets/bar/bar_notices.dart';
@@ -17,6 +19,14 @@ class ScreenMainNotice extends ConsumerStatefulWidget {
 class _ScreenMainNoticeState extends ConsumerState<ScreenMainNotice> {
   late ScrollController _scrollController;
 
+  final noticesProvider = StateNotifierProvider<NoticesNotifier, List<Notice>>((
+    ref,
+  ) {
+    final categoryIndex = ref.watch(barCategoriesProvider); // 현재 카테고리
+    final categoryName = BarCategories.categories[categoryIndex];
+    return NoticesNotifier(categoryName: categoryName);
+  });
+
   @override
   void initState() {
     super.initState();
@@ -24,7 +34,8 @@ class _ScreenMainNoticeState extends ConsumerState<ScreenMainNotice> {
   }
 
   void _scrollListener() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 100) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 100) {
       ref.read(noticesProvider.notifier).loadMoreNotices();
     }
   }
@@ -38,6 +49,14 @@ class _ScreenMainNoticeState extends ConsumerState<ScreenMainNotice> {
   @override
   Widget build(BuildContext context) {
     final notices = ref.watch(noticesProvider);
+    final categoryIndex = ref.watch(barCategoriesProvider); // 현재 선택된 카테고리 인덱스
+    final categoryName = BarCategories.categories[categoryIndex]; // 실제 카테고리 이름
+    final filteredNotices =
+        categoryName == '전체'
+            ? notices
+            : notices
+                .where((notice) => notice.category == "[$categoryName]")
+                .toList();
 
     return Scaffold(
       appBar: const _NoticeAppBar(),
@@ -56,9 +75,9 @@ class _ScreenMainNoticeState extends ConsumerState<ScreenMainNotice> {
               },
               child: ListView.builder(
                 controller: _scrollController,
-                itemCount: notices.length,
+                itemCount: filteredNotices.length,
                 itemBuilder: (context, index) {
-                  return NoticeTile(notice: notices[index]);
+                  return NoticeTile(notice: filteredNotices[index]);
                 },
               ),
             ),
@@ -100,9 +119,7 @@ class _NoticeAppBar extends StatelessWidget implements PreferredSizeWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => ScreenMainSearch(),
-                ),
+                MaterialPageRoute(builder: (context) => ScreenMainSearch()),
               );
             },
             child: Image.asset('assets/images/search_fix.png', width: 30),

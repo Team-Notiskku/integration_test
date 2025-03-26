@@ -35,17 +35,17 @@ class BarCategories extends ConsumerWidget {
                   padding: EdgeInsets.only(left: 5.w), //
                   child: GestureDetector(
                     onTap: () {
-                      // // 선택된 카테고리 변경
-                      // notifier.state = index;
+                      // 선택된 카테고리 변경
+                      notifier.state = index;
 
-                      // // 현재 선택된 학과 가져오기
-                      // final majorState = ref.read(majorProvider);
-                      // final majorOrDepartment =
-                      //     majorState.selectedMajors.isNotEmpty
-                      //         ? majorState.selectedMajors[0]
-                      //         : '';
-                      // // 공지 리스트 강제 새로고침 (FutureProvider 다시 실행)
-                      // ref.invalidate(listNoticesProvider);
+                      // 현재 선택된 학과 가져오기
+                      final majorState = ref.read(majorProvider);
+                      final majorOrDepartment =
+                          majorState.selectedMajors.isNotEmpty
+                              ? majorState.selectedMajors[0]
+                              : '';
+                      // 공지 리스트 강제 새로고침 (FutureProvider 다시 실행)
+                      ref.invalidate(listNoticesProvider);
                     },
                     child: Padding(
                       padding: EdgeInsets.only(top: 3.w),

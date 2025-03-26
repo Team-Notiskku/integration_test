@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:integration_test/tabs/screen_main_notice.dart';
+import 'package:integration_test/screen/screen_intro_select.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          home: const ScreenMainNotice(),
+          home: const ScreenIntroSelect(),
         );
       },
     );

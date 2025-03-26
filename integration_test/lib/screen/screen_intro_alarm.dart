@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:integration_test/providers/keyword_providers.dart';
 import 'package:integration_test/providers/major_provider.dart';
+import 'package:integration_test/screen/screen_intro_ready.dart';
 import 'package:integration_test/widgets/button/wide_green.dart';
+import 'package:integration_test/widgets/dialog/dialog_no_alarm.dart';
 import 'package:integration_test/widgets/grid/grid_alarm_keyword.dart';
 import 'package:integration_test/widgets/list/list_alarm_major.dart';
 
