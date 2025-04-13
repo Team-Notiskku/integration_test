@@ -19,14 +19,6 @@ class ScreenMainNotice extends ConsumerStatefulWidget {
 class _ScreenMainNoticeState extends ConsumerState<ScreenMainNotice> {
   late ScrollController _scrollController;
 
-  final noticesProvider = StateNotifierProvider<NoticesNotifier, List<Notice>>((
-    ref,
-  ) {
-    final categoryIndex = ref.watch(barCategoriesProvider); // 현재 카테고리
-    final categoryName = BarCategories.categories[categoryIndex];
-    return NoticesNotifier(categoryName: categoryName);
-  });
-
   @override
   void initState() {
     super.initState();
@@ -34,9 +26,18 @@ class _ScreenMainNoticeState extends ConsumerState<ScreenMainNotice> {
   }
 
   void _scrollListener() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 100) {
-      ref.read(noticesProvider.notifier).loadMoreNotices();
+    final position = _scrollController.position;
+    final notices = ref.read(listNoticesProvider);
+
+    // 공지 개수가 10개 이하일 땐 항상 추가 로드
+    if (notices.length <= 10) {
+      ref.read(listNoticesProvider.notifier).loadMoreNotices();
+      return;
+    }
+
+    // 스크롤이 맨 아래에 닿았을 때만 추가 로드
+    if (position.pixels >= position.maxScrollExtent - 100) {
+      ref.read(listNoticesProvider.notifier).loadMoreNotices();
     }
   }
 
@@ -48,7 +49,7 @@ class _ScreenMainNoticeState extends ConsumerState<ScreenMainNotice> {
 
   @override
   Widget build(BuildContext context) {
-    final notices = ref.watch(noticesProvider);
+    final notices = ref.watch(listNoticesProvider);
     final categoryIndex = ref.watch(barCategoriesProvider); // 현재 선택된 카테고리 인덱스
     final categoryName = BarCategories.categories[categoryIndex]; // 실제 카테고리 이름
     final filteredNotices =
@@ -71,7 +72,7 @@ class _ScreenMainNoticeState extends ConsumerState<ScreenMainNotice> {
               color: const Color(0xFF0B5B42),
               backgroundColor: Colors.white,
               onRefresh: () async {
-                await ref.read(noticesProvider.notifier).refreshNotices();
+                await ref.read(listNoticesProvider.notifier).refreshNotices();
               },
               child: ListView.builder(
                 controller: _scrollController,

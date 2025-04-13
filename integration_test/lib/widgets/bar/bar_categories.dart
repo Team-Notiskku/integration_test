@@ -10,12 +10,12 @@ class BarCategories extends ConsumerWidget {
 
   static const categories = [
     '전체',
-    '학사',
-    '입학',
-    '취업',
     '채용/모집',
+    '학사',
     '장학',
     '행사/세미나',
+    '입학',
+    '취업',
     '일반',
   ];
 
